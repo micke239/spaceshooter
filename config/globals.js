@@ -1,0 +1,1 @@
+var __basedir = "/Users/lallarN/git/spaceshooter/";
