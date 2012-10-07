@@ -1,3 +1,3 @@
 #spaceshooter
 
-A spaceshooter game!! 
+A spaceshooter game!! (currently a work in progress..)
