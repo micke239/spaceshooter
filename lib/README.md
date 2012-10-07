@@ -1,3 +1,4 @@
 #Client libs
 
-* Backbone.js
+* RequireJS
+* Lodash (underscore)
