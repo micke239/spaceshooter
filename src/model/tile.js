@@ -1,7 +1,7 @@
 define(function() {
     "use strict";
     var tile = function() {
-	    var sprite = 0, 
+	    var sprite = "default", 
 	    position = {
 	        x: 0,
 	        y: 0,

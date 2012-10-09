@@ -34,7 +34,7 @@ require(["star"], function(star) {
 		setTimeout(run, updateIntervalMs - (new Date() - start));
 	};
 	
-	for (i = 0; i < 100; i++) {
+	for (i = 0; i < 100; i++) {
 		model.push(star());
 	}
 	

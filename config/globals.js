@@ -1,1 +1,1 @@
-var __basedir = "/Users/lallarN/git/spaceshooter/";
+var __basedir = "/Users/micke/privat/spaceshooter/";

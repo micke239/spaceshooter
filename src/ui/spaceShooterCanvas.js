@@ -1,13 +1,22 @@
-define([], function() {
+define(["../img/spritemap.js"], function(spritemapRaw) {
 	"use strict";
-	var ctx, width, height, fps = 60, spritemap = new Image(), SPRITE_SIZE = 32;
-	
-	spritemap.src = __basedir + "img/spritemap.png";
+	var ctx, width, height, fps = 60, SPRITE_SIZE = 32, spritemap = {};
 	
 	var init = function(canvas) {
 		ctx = canvas.getContext("2d");
 		width = canvas.width;
 		height = canvas.height;
+		
+		var field;
+		for(field in spritemapRaw) {
+			var raw = spritemapRaw[field];
+			var img = new Image();
+
+			img.src = "data:" + raw.mimeType + ";base64," + raw.data;
+			
+			spritemap[field] = img;
+		}
+				
 		return this;
 	};
 	
@@ -38,9 +47,10 @@ define([], function() {
 	};
 	
 	var drawTiles = function(tiles) {
-		var i;
+		var i, tile;
 		for (i = 0; i < tiles.length; i++) {
-			ctx.drawImage(spritemap, tiles[i].sprite*SPRITE_SIZE, 0, SPRITE_SIZE, SPRITE_SIZE, tiles[i].x, tiles[i].y, SPRITE_SIZE, SPRITE_SIZE);
+			tile = tiles[i];
+			ctx.drawImage(spritemap[tile.sprite], tile.x, tile.y);
 		}
 	};
 
