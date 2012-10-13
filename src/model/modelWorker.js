@@ -2,15 +2,15 @@ importScripts("../../config/globals.js");
 importScripts(__basedir + "config/model-require.js");
 importScripts(__basedir + "lib/require-2.0.6.js");
 
-require(["star"], function(star) {
+require(["object/Star"], function(Star) {
 	
-	var model = [], i, updateIntervalMs = 17, updateIntervalSeconds = updateIntervalMs / 1000;
+	var model = [], i, updateIntervalMs = 17, lastRun = new Date();
 	
-	var updateModel = function() {
+	var updateModel = function(multiplier) {
 		var i;
 		
 		for (i = 0; i < model.length; i++) {
-			model[i].update(updateIntervalSeconds);
+			model[i].update(multiplier);
 		};
 	};
 	
@@ -25,9 +25,11 @@ require(["star"], function(star) {
 	};
 	
 	var run = function() {
-		var start = new Date();
-		
-		updateModel();
+		var start = new Date(),
+			updateMultiplier = (start - lastRun) / 1000;
+		lastRun = start;
+
+		updateModel(updateMultiplier);
 		
 		self.postMessage({type:"model", data: serializedModel()});
 		
@@ -35,11 +37,12 @@ require(["star"], function(star) {
 	};
 	
 	for (i = 0; i < 100; i++) {
-		model.push(star());
+		model.push(new Star());
 	}
 	
-	self.postMessage({type:"log", data: "ModelWorker initialization complete."});
-	
 	run();
+
+	self.postMessage({type:"start"});
+	self.postMessage({type:"log", data: "ModelWorker initialization complete."});
 });
 

@@ -31,13 +31,17 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
 	var handleEvents = function() {
 		
 	};
-	
+
+
 	var handleMessage = {
 		"model": function(updatedModel) {
 			model = updatedModel;
 		},
 		"log": function(string) {
 			logger.info(string);
+		},
+		"start": function() {
+			requestAnimationFrame(loop);
 		}
 	};
 	
@@ -46,7 +50,6 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
 			handleMessage[ev.data.type](ev.data.data);
 		};
 		ssCanvas = spaceShooterCanvas.init(canvas);
-		requestAnimationFrame(loop);
 	};
 
     return {
