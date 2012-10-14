@@ -42,7 +42,8 @@ define(function() {
         };
 
         this.setSize = function(newSize) {
-            size = newSize;
+            size.width = newSize.width || size.width;
+            size.height = newSize.height || size.height;
         };
 
         this.getSize = function() {
