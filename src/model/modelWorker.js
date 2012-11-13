@@ -2,8 +2,10 @@ importScripts("../../config/globals.js");
 importScripts(__basedir + "config/model-require.js");
 importScripts(__basedir + "lib/require-2.0.6.js");
 
-require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
-    
+var workerSelf = self;
+
+require(["object/Star", "object/PlayerShip", "object/PlayerProjectile"], function(Star, PlayerShip, PlayerProjectile) {
+    "use strict";
     var model = [], i, updateIntervalMs = 17, lastRun = new Date(), player = new PlayerShip();
     
     var updateModel = function(multiplier) {
@@ -11,6 +13,11 @@ require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
         
         for (i = 0; i < model.length; i++) {
             model[i].update(multiplier);
+
+            if (model[i] instanceof PlayerProjectile && model[i].shouldDestroy()) {
+                model.splice(i,1);
+                i--;
+            }
         };
     };
     
@@ -36,6 +43,10 @@ require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
         setTimeout(run, updateIntervalMs - (new Date() - start));
     };
 
+    var firePlayerProjectile = function() {
+        model.push(new PlayerProjectile(player.getPosition().x, player.getPosition().y - 20, 0, -600));
+    };
+
     var handleMessage = {
         "keydown": function(type) {
             switch(type) {
@@ -50,6 +61,9 @@ require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
                 break;
                 case "down":
                 player.goBackwards();
+                break;
+                case "fire":
+                firePlayerProjectile();
                 break;
             }
         },

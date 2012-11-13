@@ -42,7 +42,6 @@ define(["underscore","object/abstract/MovingGameObject", "object/abstract/AliveG
             movingGameObject.update(multiplier);
             aliveGameObject.update();
 
-
             var position = this.getPosition();
             if (position.y > __worldheight) {
                 position.y = __worldheight;
@@ -140,7 +139,7 @@ define(["underscore","object/abstract/MovingGameObject", "object/abstract/AliveG
                 alterSprite(ENGINE_POWER, HALF_ENGINE);
             }
         };
-    }
+    };
 
     return PlayerShip;
 });

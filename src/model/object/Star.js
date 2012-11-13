@@ -5,7 +5,7 @@ define(["underscore", "object/abstract/MovingGameObject"], function(_, MovingGam
         
         this.setSprite("star");
         this.setVelocity({y: 50});
-        this.setPosition({x: Math.random()*__worldwidth, y: Math.random()*__worldheight});
+        this.setPosition({x: Math.random()*__worldwidth, y: -1*__worldheight + Math.random()*__worldheight*2});
 
         this.update = function(multiplier) {
             parent.update(multiplier);
@@ -14,8 +14,7 @@ define(["underscore", "object/abstract/MovingGameObject"], function(_, MovingGam
             var position = this.getPosition();
 
             if (position.y - 5 > __worldheight) {
-                position.y = 0 - Math.random()*10;
-                position.x = Math.random() * __worldwidth;
+                position.y = 0 - Math.random()*__worldheight;
             }
         };
     };

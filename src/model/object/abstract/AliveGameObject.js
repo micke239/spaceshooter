@@ -1,4 +1,4 @@
-define(["underscore", "object/abstract/GameObject", "status/AliveGameObjectStatus"], 
+define(["underscore", "object/abstract/GameObject", "enum/AliveGameObjectStatus"], 
     function(_, GameObject, AliveGameObjectStatus) {
     
     var AliveGameObject = function() {

@@ -40,6 +40,9 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
         } else if (ev.keyCode === 40) {
             gameWorker.postMessage({type: "keydown", data: "down"});
             ev.preventDefault();
+        } else if (ev.keyCode === 32) {
+            gameWorker.postMessage({type: "keydown", data: "fire"});
+            ev.preventDefault();
         }
     });
  
