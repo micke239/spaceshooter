@@ -1,54 +1,54 @@
 define(function() {
     "use strict";
     var GameObject = function() {
-        var sprite = "default", 
-        size = {
+        this._sprite = "default";
+        this._size = {
             width: 32,
             height: 32
-        },
-        position = {
+        };
+        this._position = {
             x: 0,
             y: 0,
             angle: 0
         };
-
-        this.getPosition = function() {
-            return position;
-        };
+    };
     
-        this.setPosition = function(newPosition) {
-            position.x = newPosition.x || position.x;
-            position.y = newPosition.y || position.y;
-            position.angle = newPosition.angle || position.angle;   
-        };
+    GameObject.prototype.getPosition = function() {
+        return this._position;
+    };
 
-        this.getSprite = function() {
-            return sprite;
-        };
+    GameObject.prototype.setPosition = function(position) {
+        this._position.x = position.x || this._position.x;
+        this._position.y = position.y || this._position.y;
+        this._position.angle = position.angle || this._position.angle;   
+    };
 
-        this.setSprite = function(newSprite) {
-            sprite = newSprite;
-        };
+    GameObject.prototype.getSprite = function() {
+        return this._sprite;
+    };
 
-        this.serialize = function() {
-            return {
-                x: position.x, 
-                y: position.y, 
-                angle: position.angle,
-                width: size.width, 
-                height: size.height,
-                sprite: sprite
-            };           
-        };
+    GameObject.prototype.setSprite = function(sprite) {
+        this._sprite = sprite;
+    };
 
-        this.setSize = function(newSize) {
-            size.width = newSize.width || size.width;
-            size.height = newSize.height || size.height;
-        };
+    GameObject.prototype.serialize = function() {
+        return {
+            x: this._position.x, 
+            y: this._position.y, 
+            angle: this._position.angle,
+            width: this._size.width, 
+            height: this._size.height,
+            sprite: this._sprite
+        };           
+    };
 
-        this.getSize = function() {
-            return size;
-        };
+    GameObject.prototype.setSize = function(size) {
+        this._size.width = size.width || this._size.width;
+        this._size.height = size.height || this._size.height;
+    };
+
+    GameObject.prototype.getSize = function() {
+        return this._size;
     };
     
     return GameObject;

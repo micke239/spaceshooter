@@ -14,13 +14,10 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
     var loop = function() {     
         updateFPS();
         draw();
-        
         requestAnimationFrame(loop);
     };
     
     var draw = function() {
-        var i;
-        
         ssCanvas.clear();
         ssCanvas.drawBackground();
         ssCanvas.drawTiles(model);
@@ -58,6 +55,9 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
             ev.preventDefault();
         } else if (ev.keyCode === 40) {
             gameWorker.postMessage({type: "keyup", data: "down"});
+            ev.preventDefault();
+        } else if (ev.keyCode === 32) {
+            gameWorker.postMessage({type: "keyup", data: "fire"});
             ev.preventDefault();
         }
     });

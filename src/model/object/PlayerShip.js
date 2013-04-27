@@ -1,144 +1,155 @@
-define(["underscore","object/abstract/MovingGameObject", "object/abstract/AliveGameObject"],
-    function(_, MovingGameObject, AliveGameObject) {
+define(["object/abstract/AliveGameObject", "object/PlayerProjectile", "object/abstract/Projectile"],
+    function(AliveGameObject, PlayerProjectile, Projectile) {
         "use strict";
-
-    var PlayerShip = function() {
-        var self = this;
-
-        var movingGameObject = new MovingGameObject;
-        var aliveGameObject = new AliveGameObject;
-
-        _.extend(this, aliveGameObject);
-        _.extend(this, movingGameObject);
-
-        var ENGINE_POWER = 1,
-            FULL_ENGINE = "fullengine",
-            NO_ENGINE = "noengine",
-            HALF_ENGINE = "halfengine",
-            SHIP_TILT = 2,
-            LEFT = "left",
-            RIGHT = "right",
-            NONE = "forward";
-
-        var goRight = false,
-            goLeft = false,
-            goForward = false,
-            goBackwards = false;
-
+        
+    var ENGINE_POWER = 1,
+        FULL_ENGINE = "fullengine",
+        NO_ENGINE = "noengine",
+        HALF_ENGINE = "halfengine",
+        SHIP_TILT = 2,
+        LEFT = "left",
+        RIGHT = "right",
+        NONE = "forward";
+    
+    var PlayerShip = function() {
+        AliveGameObject.prototype.constructor.call(this);
+        
+        this._goRight = false,
+        this._goLeft = false,
+        this._goForward = false,
+        this._goBackwards = false;
 
         this.setSprite("ship_halfengine_forward");
         this.setSize({width: 39, height: 36});
         this.setPosition({x: __worldwidth / 2, y: __worldheight - 100});
+    };
+    
+    PlayerShip.prototype = new AliveGameObject();
+    PlayerShip.prototype.constructor = PlayerShip;
+    
+    PlayerShip.prototype.alterSprite = function(alterationType, value) {
+        var spriteSplit = this.getSprite().split("_");
 
-        var alterSprite = function(alterationType, value) {
-            var spriteSplit = self.getSprite().split("_");
-            
-            spriteSplit[alterationType] = value;
+        spriteSplit[alterationType] = value;
 
-            self.setSprite(spriteSplit.join("_"));
-        };
+        this.setSprite(spriteSplit.join("_"));
+    };
 
-        this.update = function(multiplier) {
-            movingGameObject.update(multiplier);
-            aliveGameObject.update();
+    PlayerShip.prototype.update = function(multiplier) {
+        //super call
+        AliveGameObject.prototype.update.call(this, multiplier);
 
-            var position = this.getPosition();
-            if (position.y > __worldheight) {
-                position.y = __worldheight;
-            } else if (position.y < 0) {
-                position.y = 0;
-            }
+        var position = this.getPosition();
+        if (position.y > __worldheight) {
+            position.y = __worldheight;
+        } else if (position.y < 0) {
+            position.y = 0;
+        }
 
-            if (position.x > __worldwidth) {
-                position.x = __worldwidth;
-            } else if (position.x < 0) {
-                position.x = 0;
-            }
-        };
+        if (position.x > __worldwidth) {
+            position.x = __worldwidth;
+        } else if (position.x < 0) {
+            position.x = 0;
+        }
+    };
 
-        this.goRight = function() {
-            if (!goRight) {
-                goRight = true;
+    PlayerShip.prototype.goRight = function() {
+        if (!this._goRight) {
+            this._goRight = true;
 
-                this.getVelocity().x = 150;
-                alterSprite(SHIP_TILT, RIGHT);
-            }
-        };
+            this.getVelocity().x = 150;
+            this.alterSprite(SHIP_TILT, RIGHT);
+        }
+    };
 
-        this.stopRight = function() {
-            goRight = false;
+    PlayerShip.prototype.stopRight = function() {
+        this._goRight = false;
 
-            if (goLeft) {
-                this.getVelocity().x = -150;
-                alterSprite(SHIP_TILT, LEFT);
-            } else {
-                this.getVelocity().x = 0;
-                alterSprite(SHIP_TILT, NONE);
-            }
-        };
+        if (this._goLeft) {
+            this.getVelocity().x = -150;
+            this.alterSprite(SHIP_TILT, LEFT);
+        } else {
+            this.getVelocity().x = 0;
+            this.alterSprite(SHIP_TILT, NONE);
+        }
+    };
 
-        this.goLeft = function() {
-            if (!goLeft) {
-                goLeft = true;
+    PlayerShip.prototype.goLeft = function() {
+        if (!this._goLeft) {
+            this._goLeft = true;
 
-                this.getVelocity().x = -150;
-                alterSprite(SHIP_TILT, LEFT);
-            }
-        };
+            this.getVelocity().x = -150;
+            this.alterSprite(SHIP_TILT, LEFT);
+        }
+    };
 
-        this.stopLeft = function() {
-            goLeft = false;
+    PlayerShip.prototype.stopLeft = function() {
+       this._goLeft = false;
 
-            if (goRight) {
-                this.getVelocity().x = 150;
-                alterSprite(SHIP_TILT, RIGHT);
-            } else {
-                this.getVelocity().x = 0;
-                alterSprite(SHIP_TILT, NONE);
-            }
-        };
+        if (this._goRight) {
+            this.getVelocity().x = 150;
+            this.alterSprite(SHIP_TILT, RIGHT);
+        } else {
+            this.getVelocity().x = 0;
+            this.alterSprite(SHIP_TILT, NONE);
+        }
+    };
 
-        this.goBackwards = function() {
-            if (!goBackwards) {
-                goBackwards = true;
+    PlayerShip.prototype.goBackwards = function() {
+        if (!this._goBackwards) {
+            this._goBackwards = true;
 
-                this.getVelocity().y = 50;
-                alterSprite(ENGINE_POWER, NO_ENGINE);
-            }
-        };
+            this.getVelocity().y = 50;
+            this.alterSprite(ENGINE_POWER, NO_ENGINE);
+        }
+    };
 
-        this.stopBackwards = function() {
-            goBackwards = false;
+    PlayerShip.prototype.stopBackwards = function() {
+        this._goBackwards = false;
 
-            if (goForward) {
-                this.getVelocity().y = -50;
-                alterSprite(ENGINE_POWER, FULL_ENGINE);
-            } else {
-                this.getVelocity().y = 0;
-                alterSprite(ENGINE_POWER, HALF_ENGINE);
-            }
-        };
+        if (this._goForward) {
+            this.getVelocity().y = -50;
+            this.alterSprite(ENGINE_POWER, FULL_ENGINE);
+        } else {
+            this.getVelocity().y = 0;
+            this.alterSprite(ENGINE_POWER, HALF_ENGINE);
+        }
+    };
 
-        this.goForward = function() {
-            if (!goForward) {
-                goForward = true;
+    PlayerShip.prototype.goForward = function() {
+        if (!this._goForward) {
+            this._goForward = true;
 
-                this.getVelocity().y = -50;
-                alterSprite(ENGINE_POWER, FULL_ENGINE);
-            }
-        };
+            this.getVelocity().y = -50;
+            this.alterSprite(ENGINE_POWER, FULL_ENGINE);
+        }
+    };
 
-        this.stopForward = function() {
-            goForward = false;
+    PlayerShip.prototype.stopForward = function() {
+        this._goForward = false;
 
-            if (goBackwards) {
-                this.getVelocity().y = 50;
-                alterSprite(ENGINE_POWER, NO_ENGINE);
-            } else {
-                this.getVelocity().y = 0;
-                alterSprite(ENGINE_POWER, HALF_ENGINE);
-            }
-        };
+        if (this._goBackwards) {
+            this.getVelocity().y = 50;
+            this.alterSprite(ENGINE_POWER, NO_ENGINE);
+        } else {
+            this.getVelocity().y = 0;
+            this.alterSprite(ENGINE_POWER, HALF_ENGINE);
+        }
+    };
+    
+    PlayerShip.prototype.fireProjectile = function() {
+        return new PlayerProjectile(this.getPosition().x, this.getPosition().y - 20, 0, -600)  
+    };
+    
+    PlayerShip.prototype.onCollition = function(object) {
+        workerSelf.postMessage({type:"logObject", data: typeof object});
+        if (object instanceof Projectile) {
+            this.damage(object.getPower());
+            workerSelf.postMessage({type:"log", data: "Collition with projectile."});
+        } else if (object instanceof AliveGameObject) {
+            this.damage(this.getMaxHealth());
+            workerSelf.postMessage({type:"log", data: "Collition with alive game obejct."});
+        }
     };
 
     return PlayerShip;

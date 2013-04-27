@@ -4,17 +4,31 @@ importScripts(__basedir + "lib/require-2.0.6.js");
 
 var workerSelf = self;
 
-require(["object/Star", "object/PlayerShip", "object/PlayerProjectile"], function(Star, PlayerShip, PlayerProjectile) {
+require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
     "use strict";
-    var model = [], i, updateIntervalMs = 17, lastRun = new Date(), player = new PlayerShip();
+    var model = [], i, updateIntervalMs = 17, lastRun = new Date(), player = new PlayerShip(), playerProjectileLocked = false;
     
-    var updateModel = function(multiplier) {
+    var detectCollitions = function() {
+        var i, j;
+        
+        for (i = 0; i < model.length; i++) {
+            for (j = i+1; j < model.length; j++) {
+                if ("onCollition" in model[i] && "onCollition" in model[j]) {
+                    workerSelf.postMessage({type:"log", data: "Time for collition."});
+                    model[j].onCollition(model[i]);
+                    model[i].onCollition(model[j]);
+                }
+            }
+        };        
+    };
+    
+    var updateModel = function(multiplier, date) {
         var i;
         
         for (i = 0; i < model.length; i++) {
-            model[i].update(multiplier);
+            model[i].update(multiplier, date);
 
-            if (model[i] instanceof PlayerProjectile && model[i].shouldDestroy()) {
+            if ("shouldDestroy" in model[i] && model[i].shouldDestroy()) {
                 model.splice(i,1);
                 i--;
             }
@@ -36,7 +50,8 @@ require(["object/Star", "object/PlayerShip", "object/PlayerProjectile"], functio
             updateMultiplier = (start - lastRun) / 1000;
         lastRun = start;
 
-        updateModel(updateMultiplier);
+        detectCollitions();
+        updateModel(updateMultiplier, new Date());
         
         self.postMessage({type:"model", data: serializedModel()});
         
@@ -44,7 +59,11 @@ require(["object/Star", "object/PlayerShip", "object/PlayerProjectile"], functio
     };
 
     var firePlayerProjectile = function() {
-        model.push(new PlayerProjectile(player.getPosition().x, player.getPosition().y - 20, 0, -600));
+        if (!playerProjectileLocked) {
+            playerProjectileLocked = true;
+        
+            model.push(player.fireProjectile());
+        }
     };
 
     var handleMessage = {
@@ -80,6 +99,8 @@ require(["object/Star", "object/PlayerShip", "object/PlayerProjectile"], functio
                 break;
                 case "down":
                 player.stopBackwards();
+                case "fire":
+                playerProjectileLocked = false;
                 break;
             }            
         }

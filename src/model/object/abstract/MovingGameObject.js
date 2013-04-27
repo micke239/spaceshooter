@@ -1,34 +1,35 @@
-define(["underscore","object/abstract/GameObject"], function(_, GameObject) {
+define(["object/abstract/GameObject"], function(GameObject) {
     "use strict";
     
     var MovingGameObject = function() {
-        _.extend(this, new GameObject());
-
-        var velocity = {
+        GameObject.prototype.constructor.call(this);
+        this._velocity = {
             x: 0,
             y: 0,
             angle: 0
-        },
-        lastUpdate = new Date(),
-        count = 0;
-
-        this.getVelocity = function() {
-            return velocity;
         };
+        this._count = 0;
+    };
+    
+    MovingGameObject.prototype = new GameObject();
+    MovingGameObject.prototype.constructor = MovingGameObject;
+    
+    MovingGameObject.prototype.getVelocity = function() {
+        return this._velocity;
+    };
 
-        this.setVelocity = function(newVelocity) {
-            velocity.x = newVelocity.x || velocity.x;
-            velocity.y = newVelocity.y || velocity.y;
-            velocity.angle = newVelocity.angle || velocity.angle;           
-        };
+    MovingGameObject.prototype.setVelocity = function(velocity) {
+        this._velocity.x = velocity.x || this._velocity.x;
+        this._velocity.y = velocity.y || this._velocity.y;
+        this._velocity.angle = velocity.angle || this._velocity.angle;           
+    };
 
-        this.update = function(multiplier) {
-            var position = this.getPosition();
+    MovingGameObject.prototype.update = function(multiplier) {
+        var position = this.getPosition();
 
-            position.x += velocity.x * multiplier;
-            position.y += velocity.y * multiplier;
-            position.angle += velocity.angle * multiplier;
-        };
+        position.x += this._velocity.x * multiplier;
+        position.y += this._velocity.y * multiplier;
+        position.angle += this._velocity.angle * multiplier;
     };
 
     return MovingGameObject;
