@@ -138,7 +138,7 @@ define(["object/abstract/AliveGameObject", "object/PlayerProjectile", "object/ab
     };
     
     PlayerShip.prototype.fireProjectile = function() {
-        return new PlayerProjectile(this.getPosition().x, this.getPosition().y - 20, 0, -600)  
+        return new PlayerProjectile(this.getPosition().x, this.getPosition().y - 39, 0, -600)  
     };
     
     PlayerShip.prototype.onCollition = function(object) {

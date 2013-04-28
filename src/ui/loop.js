@@ -19,8 +19,8 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
     
     var draw = function() {
         ssCanvas.clear();
-        ssCanvas.drawBackground();
-        ssCanvas.drawTiles(model);
+        ssCanvas.drawBackground(model.traveledDistance);
+        ssCanvas.drawTiles(model.objects);
         ssCanvas.drawFPS();
     };
 

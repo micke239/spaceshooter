@@ -40,9 +40,11 @@ define(["../img/spritemap.js"], function(spritemapRaw) {
         return this;
     };
     
-    var drawBackground = function() {
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0,0, width, height);
+    var drawBackground = function(traveledDistance) {
+        var pixelDiff = traveledDistance % 500;
+        
+        ctx.drawImage(spritemap["bg"], 0, pixelDiff);
+        ctx.drawImage(spritemap["bg"], 0, pixelDiff - 500);
         
         return this;
     };
