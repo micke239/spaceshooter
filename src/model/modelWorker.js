@@ -4,7 +4,9 @@ importScripts(__basedir + "lib/require-2.0.6.js");
 
 var workerSelf = self;
 
-require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
+require(["object/Star", "object/PlayerShip", "object/abstract/AliveGameObject", "enum/AliveGameObjectStatus"], 
+        function(Star, PlayerShip, AliveGameObject, AliveGameObjectStatus) {
+    
     "use strict";
     var model = [], 
         i, 
@@ -13,7 +15,10 @@ require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
         updateIntervalMs = 17, 
         lastRun = new Date(), 
         player = new PlayerShip(), 
+        enemy = new PlayerShip(),
         playerProjectileLocked = false;
+    
+    enemy.setPosition({angle : 180, y : 100});
     
     var detectCollitions = function() {
         var i, j;
@@ -45,10 +50,6 @@ require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
             topB = positionB.y,
             bottomA = positionA.y + sizeA.height, 
             bottomB = positionB.y + sizeB.height;
-
-
-        workerSelf.postMessage({type : "log", data : topA + ", " + rightA + ", " + bottomA + ", " + leftA})
-        workerSelf.postMessage({type : "log", data : topB + ", " + rightB + ", " + bottomB + ", " + leftB})
 
         //If any of the sides from A are outside of B
         if( bottomA <= topB )
@@ -94,7 +95,10 @@ require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
         var serializedModel = [], i;
         
         for(i = 0; i < model.length; i++) {
-            serializedModel.push(model[i].serialize())
+            var isAliveGameObject = model[i] instanceof AliveGameObject;
+            if (!isAliveGameObject || model[i].getStatus() !== AliveGameObjectStatus.DEAD) {
+                serializedModel.push(model[i].serialize())
+            }
         }
         
         return serializedModel;
@@ -164,14 +168,9 @@ require(["object/Star", "object/PlayerShip"], function(Star, PlayerShip) {
     self.addEventListener("message", function(ev) {
         handleMessage[ev.data.type](ev.data.data);
     });
-    
-    /*
-    for (i = 0; i < 100; i++) {
-        model.push(new Star());
-    }
-    */
 
     model.push(player);
+    model.push(enemy);
     
     run();
 

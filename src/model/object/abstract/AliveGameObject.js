@@ -8,7 +8,7 @@ define(["object/abstract/MovingGameObject", "enum/AliveGameObjectStatus"],
         this._status = AliveGameObjectStatus.ALIVE;
     };
     
-    AliveGameObject.prototype = new MovingGameObject();
+    AliveGameObject.prototype = Object.create(MovingGameObject.prototype);
     AliveGameObject.prototype.constructor = AliveGameObject;
     
     AliveGameObject.prototype.getMaxHealth = function() {
@@ -17,6 +17,10 @@ define(["object/abstract/MovingGameObject", "enum/AliveGameObjectStatus"],
 
     AliveGameObject.prototype.getCurrentHealth = function() {
         return this._currentHealth;
+    };
+
+    AliveGameObject.prototype.getStatus = function() {
+        return this._status;
     };
 
     AliveGameObject.prototype.damage = function(amount) {

@@ -9,8 +9,9 @@ define(["object/abstract/MovingGameObject"], function(MovingGameObject) {
         this.setPosition({x: Math.random()*__worldwidth, y: -1*__worldheight + Math.random()*__worldheight*2});
     };
     
-    Star.prototype = new MovingGameObject();
+    Star.prototype = Object.create(MovingGameObject.prototype);
     Star.prototype.constructor = Star;
+    
     Star.prototype.update = function(multiplier) {
         //super call
         MovingGameObject.prototype.update.call(this, multiplier);

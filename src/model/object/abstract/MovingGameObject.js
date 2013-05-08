@@ -11,7 +11,7 @@ define(["object/abstract/GameObject"], function(GameObject) {
         this._count = 0;
     };
     
-    MovingGameObject.prototype = new GameObject();
+    MovingGameObject.prototype = Object.create(GameObject.prototype);
     MovingGameObject.prototype.constructor = MovingGameObject;
     
     MovingGameObject.prototype.getVelocity = function() {

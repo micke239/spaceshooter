@@ -20,7 +20,8 @@ define(function() {
     GameObject.prototype.setPosition = function(position) {
         this._position.x = position.x || this._position.x;
         this._position.y = position.y || this._position.y;
-        this._position.angle = position.angle || this._position.angle;   
+        this._position.angle = (position.angle * Math.PI/180) || this._position.angle;
+        workerSelf.postMessage({type : "logObject", data : this._position});
     };
 
     GameObject.prototype.getSprite = function() {

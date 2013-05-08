@@ -53,7 +53,13 @@ define(["../img/spritemap.js"], function(spritemapRaw) {
         var i, tile;
         for (i = 0; i < tiles.length; i++) {
             tile = tiles[i];
-            ctx.drawImage(spritemap[tile.sprite], tile.x - tile.width/2, tile.y - tile.height/2);
+            
+            ctx.save();
+            ctx.translate(tile.x, tile.y);
+            ctx.rotate(tile.angle);
+            ctx.translate(-tile.width/2, -tile.height/2)
+            ctx.drawImage(spritemap[tile.sprite], 0, 0);
+            ctx.restore();
         }
     };
 

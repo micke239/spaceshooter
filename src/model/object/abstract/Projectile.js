@@ -10,7 +10,7 @@ define(["object/abstract/MovingGameObject", "object/abstract/AliveGameObject"], 
 		this._power = power;
  	};
  	
- 	Projectile.prototype = new MovingGameObject();
+ 	Projectile.prototype = Object.create(MovingGameObject.prototype);
  	Projectile.prototype.constructor = Projectile;
  	
  	Projectile.prototype.shouldDestroy = function(destroy) {

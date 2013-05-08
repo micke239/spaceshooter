@@ -9,7 +9,7 @@ define(["object/abstract/Projectile"], function(Projectile) {
 		this.setPosition({x: x, y: y});
 	};
     
-    PlayerProjectile.prototype = new Projectile(500, 5);
+    PlayerProjectile.prototype = Object.create(Projectile.prototype);
     PlayerProjectile.prototype.constructor = PlayerProjectile;
 
 	return PlayerProjectile;
