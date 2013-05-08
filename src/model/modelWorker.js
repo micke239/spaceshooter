@@ -4,8 +4,8 @@ importScripts(__basedir + "lib/require-2.0.6.js");
 
 var workerSelf = self;
 
-require(["object/Star", "object/PlayerShip", "object/abstract/AliveGameObject", "enum/AliveGameObjectStatus"], 
-        function(Star, PlayerShip, AliveGameObject, AliveGameObjectStatus) {
+require(["object/Star", "object/PlayerShip", "manager/playerShipManager","manager/projectileManager", "object/abstract/AliveGameObject", "enum/AliveGameObjectStatus"], 
+        function(Star, PlayerShip, playerShipManager, projectileManager, AliveGameObject, AliveGameObjectStatus) {
     
     "use strict";
     var model = [], 
@@ -121,7 +121,7 @@ require(["object/Star", "object/PlayerShip", "object/abstract/AliveGameObject", 
         if (!playerProjectileLocked) {
             playerProjectileLocked = true;
         
-            model.push(player.fireProjectile());
+            model.push(projectileManager.fireProjectile(player));
         }
     };
 
@@ -129,16 +129,16 @@ require(["object/Star", "object/PlayerShip", "object/abstract/AliveGameObject", 
         "keydown": function(type) {
             switch(type) {
                 case "right":
-                player.goRight();
+                playerShipManager.startMovingRight(player);
                 break;
                 case "left":
-                player.goLeft();
+                playerShipManager.startMovingLeft(player);
                 break;
                 case "up":
-                player.goForward();
+                playerShipManager.startMovingForward(player);
                 break;
                 case "down":
-                player.goBackwards();
+                playerShipManager.startMovingBackward(player);
                 break;
                 case "fire":
                 firePlayerProjectile();
@@ -148,16 +148,17 @@ require(["object/Star", "object/PlayerShip", "object/abstract/AliveGameObject", 
         "keyup": function(type) {
             switch(type) {
                 case "right":
-                player.stopRight();
+                playerShipManager.stopMovingRight(player);
                 break;
                 case "left":
-                player.stopLeft();
+                playerShipManager.stopMovingLeft(player);
                 break;
                 case "up":
-                player.stopForward();
+                playerShipManager.stopMovingForward(player);
                 break;
                 case "down":
-                player.stopBackwards();
+                playerShipManager.stopMovingBackward(player);
+                break;
                 case "fire":
                 playerProjectileLocked = false;
                 break;

@@ -3,8 +3,8 @@
  */
 define(["object/PlayerProjectile"], function(PlayerProjectile) {
     var ProjectileManager = function() {
-        this.fireProjectile = function(team) {
-            return new PlayerProjectile(this.getPosition().x, this.getPosition().y - 39, 0, -600)  
+        this.fireProjectile = function(gameObject, team) {
+            return new PlayerProjectile(gameObject.getPosition().x, gameObject.getPosition().y - 39, 0, -600)  
         };
     };
     
