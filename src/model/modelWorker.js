@@ -4,8 +4,8 @@ importScripts(__basedir + "lib/require-2.0.6.js");
 
 var workerSelf = self;
 
-require(["object/Star", "object/PlayerShip", "manager/playerShipManager","manager/projectileManager", "object/abstract/AliveGameObject", "enum/AliveGameObjectStatus"], 
-        function(Star, PlayerShip, playerShipManager, projectileManager, AliveGameObject, AliveGameObjectStatus) {
+require(["manager/playerShipManager","manager/projectileManager", "object/abstract/AliveGameObject", "enum/AliveGameObjectStatus"], 
+        function(playerShipManager, projectileManager, AliveGameObject, AliveGameObjectStatus) {
     
     "use strict";
     var model = [], 
@@ -14,8 +14,8 @@ require(["object/Star", "object/PlayerShip", "manager/playerShipManager","manage
         traveledDistance = 0,
         updateIntervalMs = 17, 
         lastRun = new Date(), 
-        player = new PlayerShip(), 
-        enemy = new PlayerShip(),
+        player = playerShipManager.createPlayerShip(), 
+        enemy = layerShipManager.createPlayerShip(), 
         playerProjectileLocked = false;
     
     enemy.setPosition({angle : 180, y : 100});

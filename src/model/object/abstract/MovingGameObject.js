@@ -19,10 +19,12 @@ define(["object/abstract/GameObject"], function(GameObject) {
     };
 
     MovingGameObject.prototype.setVelocity = function(velocity) {
-        this._velocity.x = velocity.x || this._velocity.x;
-        this._velocity.y = velocity.y || this._velocity.y;
-        this._velocity.angle = velocity.angle || this._velocity.angle;           
+        this._velocity.x = velocity.x !== undefined ? velocity.x : this._velocity.x;
+        this._velocity.y = velocity.y !== undefined ? velocity.y : this._velocity.y;
+        this._velocity.angle = velocity.angle !== undefined ? velocity.angle : this._velocity.angle;        
     };
+
+
 
     MovingGameObject.prototype.update = function(multiplier) {
         var position = this.getPosition();

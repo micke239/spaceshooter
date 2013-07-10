@@ -1,4 +1,4 @@
-define(["enum/PlayerSprite"], function(PlayerSprite) {
+define(["enum/PlayerSprite", "object/PlayerShip"], function(PlayerSprite, PlayerShip) {
     
     var PlayerShipManager = function() {
 
@@ -95,6 +95,10 @@ define(["enum/PlayerSprite"], function(PlayerSprite) {
                     ship.alterSprite(PlayerSprite.ENGINE_POWER, PlayerSprite.HALF_ENGINE);
                 }            
             }
+        };
+
+        this.createPlayerShip = function() {
+            return new PlayerShip();
         };
     };
 
