@@ -15,7 +15,7 @@ require(["manager/playerShipManager","manager/projectileManager", "object/abstra
         updateIntervalMs = 17, 
         lastRun = new Date(), 
         player = playerShipManager.createPlayerShip(), 
-        enemy = layerShipManager.createPlayerShip(), 
+        enemy = playerShipManager.createPlayerShip(), 
         playerProjectileLocked = false;
     
     enemy.setPosition({angle : 180, y : 100});
