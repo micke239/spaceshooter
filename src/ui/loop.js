@@ -29,13 +29,13 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
             gameWorker.postMessage({type: "keydown", data: "right"});
             ev.preventDefault();
         } else if (ev.keyCode === 38) {
-            gameWorker.postMessage({type: "keydown", data: "up"});
+            gameWorker.postMessage({type: "keydown", data: "forward"});
             ev.preventDefault();
         } else if (ev.keyCode === 37) {
             gameWorker.postMessage({type: "keydown", data: "left"});
             ev.preventDefault();
         } else if (ev.keyCode === 40) {
-            gameWorker.postMessage({type: "keydown", data: "down"});
+            gameWorker.postMessage({type: "keydown", data: "back"});
             ev.preventDefault();
         } else if (ev.keyCode === 32) {
             gameWorker.postMessage({type: "keydown", data: "fire"});
@@ -48,13 +48,13 @@ define(["util/logger", "ui/spaceShooterCanvas", "shim/requestAnimationFrame"], f
             gameWorker.postMessage({type: "keyup", data: "right"});
             ev.preventDefault();
         } else if (ev.keyCode === 38) {
-            gameWorker.postMessage({type: "keyup", data: "up"});
+            gameWorker.postMessage({type: "keyup", data: "forward"});
             ev.preventDefault();
         } else if (ev.keyCode === 37) {
             gameWorker.postMessage({type: "keyup", data: "left"});
             ev.preventDefault();
         } else if (ev.keyCode === 40) {
-            gameWorker.postMessage({type: "keyup", data: "down"});
+            gameWorker.postMessage({type: "keyup", data: "back"});
             ev.preventDefault();
         } else if (ev.keyCode === 32) {
             gameWorker.postMessage({type: "keyup", data: "fire"});

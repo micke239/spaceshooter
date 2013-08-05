@@ -4,178 +4,99 @@ importScripts(__basedir + "lib/require-2.0.6.js");
 
 var workerSelf = self;
 
-require(["manager/playerShipManager","manager/projectileManager", "object/abstract/AliveGameObject", "enum/AliveGameObjectStatus"], 
-        function(playerShipManager, projectileManager, AliveGameObject, AliveGameObjectStatus) {
-    
-    "use strict";
-    var model = [], 
-        i, 
-        travelingPace = 1,
-        traveledDistance = 0,
-        updateIntervalMs = 17, 
-        lastRun = new Date(), 
-        player = playerShipManager.createPlayerShip(), 
-        enemy = playerShipManager.createPlayerShip(), 
-        playerProjectileLocked = false;
-    
-    enemy.setPosition({angle : 180, y : 100});
-    
-    var detectCollitions = function() {
-        var i, j;
-        
-        for (i = 0; i < model.length; i++) {
-            for (j = i+1; j < model.length; j++) {
-                if ("onCollition" in model[i] && "onCollition" in model[j]) {
-                    if (collides(model[j], model[i])) {
-                        workerSelf.postMessage({type:"log", data: "Time for collition."});
-                        model[j].onCollition(model[i]);
-                        model[i].onCollition(model[j]);
-                    }
-                }
-            }
-        };        
-    };
-    
-    var collides = function(objectA, objectB) {
-        //The sides of the rectangles
-        var positionA = objectA.getPosition(),
-            positionB = objectB.getPosition(),
-            sizeA = objectA.getSize(),
-            sizeB = objectB.getSize(),
-            leftA = positionA.x, 
-            leftB = positionB.x,
-            rightA = positionA.x + sizeA.width, 
-            rightB = positionB.x + sizeB.width,
-            topA = positionA.y, 
-            topB = positionB.y,
-            bottomA = positionA.y + sizeA.height, 
-            bottomB = positionB.y + sizeB.height;
+require([
+  "manager/playerShipManager",
+  "manager/projectileManager",
+  "manager/collitionManager",
+  "manager/signalManager",
+  "manager/enemyShipManager",
+  "type/abstract/AliveGameObject",
+  "enum/AliveGameObjectStatus"
+], function(
+  playerShipManager,
+  projectileManager,
+  collitionManager,
+  signalManager,
+  enemyShipManager,
+  AliveGameObject,
+  AliveGameObjectStatus) {
 
-        //If any of the sides from A are outside of B
-        if( bottomA <= topB )
-        {
-            return false;
-        }
+  "use strict";
 
-        if( topA >= bottomB )
-        {
-            return false;
-        }
+  var model = [];
+  var i;
+  var travelingPace = 1;
+  var traveledDistance = 0;
+  var updateIntervalMs = 17;
+  var lastRun = new Date();
+  var player = playerShipManager.createPlayerShip();
+  var enemy = enemyShipManager.createEnemyShip();
+  var playerProjectileLocked = false;
 
-        if( rightA <= leftB )
-        {
-            return false;
-        }
+  enemy.setPosition({
+    angle: 180,
+    y: 100
+  });
 
-        if( leftA >= rightB )
-        {
-            return false;
-        }
+  //update the traveled distance each update
+  signalManager.modelUpdate.add(function() {
+    traveledDistance += travelingPace;
+  });
 
-        //If none of the sides from A are outside B
-        return true;
-    };
-    
-    var updateModel = function(multiplier, date) {
-        var i;
-        
-        traveledDistance += travelingPace;
-        
-        for (i = 0; i < model.length; i++) {
-            model[i].update(multiplier, date);
+  var run = function() {
+    var start = new Date();
+    var secondsSinceLastRun = (start - lastRun) / 1000;
+    lastRun = start;
 
-            if ("shouldDestroy" in model[i] && model[i].shouldDestroy()) {
-                model.splice(i,1);
-                i--;
-            }
-        };
-    };
-    
-    var serializedModel = function() {
-        var serializedModel = [], i;
-        
-        for(i = 0; i < model.length; i++) {
-            var isAliveGameObject = model[i] instanceof AliveGameObject;
-            if (!isAliveGameObject || model[i].getStatus() !== AliveGameObjectStatus.DEAD) {
-                serializedModel.push(model[i].serialize())
-            }
-        }
-        
-        return serializedModel;
-    };
-    
-    var run = function() {
-        var start = new Date(),
-            updateMultiplier = (start - lastRun) / 1000;
-        lastRun = start;
+    signalManager.modelUpdate.dispatch(secondsSinceLastRun, start);
+    collitionManager.detectCollitions(model);
+    signalManager.modelCleanup.dispatch(model);
 
-        detectCollitions();   
-        updateModel(updateMultiplier, new Date());
-        
-        self.postMessage({type:"model", data: {traveledDistance: traveledDistance, objects: serializedModel()}});
-        
-        setTimeout(run, updateIntervalMs - (new Date() - start));
-    };
+    var serializedModel = [];
 
-    var firePlayerProjectile = function() {
-        if (!playerProjectileLocked) {
-            playerProjectileLocked = true;
-        
-            model.push(projectileManager.fireProjectile(player));
-        }
-    };
+    signalManager.modelSerialization.dispatch(serializedModel);
 
-    var handleMessage = {
-        "keydown": function(type) {
-            switch(type) {
-                case "right":
-                playerShipManager.startMovingRight(player);
-                break;
-                case "left":
-                playerShipManager.startMovingLeft(player);
-                break;
-                case "up":
-                playerShipManager.startMovingForward(player);
-                break;
-                case "down":
-                playerShipManager.startMovingBackward(player);
-                break;
-                case "fire":
-                firePlayerProjectile();
-                break;
-            }
-        },
-        "keyup": function(type) {
-            switch(type) {
-                case "right":
-                playerShipManager.stopMovingRight(player);
-                break;
-                case "left":
-                playerShipManager.stopMovingLeft(player);
-                break;
-                case "up":
-                playerShipManager.stopMovingForward(player);
-                break;
-                case "down":
-                playerShipManager.stopMovingBackward(player);
-                break;
-                case "fire":
-                playerProjectileLocked = false;
-                break;
-            }            
-        }
-    };
-
-    self.addEventListener("message", function(ev) {
-        handleMessage[ev.data.type](ev.data.data);
+    self.postMessage({
+      type: "model",
+      data: {
+        traveledDistance: traveledDistance,
+        objects: serializedModel
+      }
     });
 
-    model.push(player);
-    model.push(enemy);
-    
-    run();
+    setTimeout(run, updateIntervalMs - (new Date() - start));
+  };
 
-    self.postMessage({type:"start"});
-    self.postMessage({type:"log", data: "ModelWorker initialization complete."});
+  var firePlayerProjectile = function() {
+    if (!playerProjectileLocked) {
+      playerProjectileLocked = true;
+
+      model.push(projectileManager.fireProjectile(player));
+    }
+  };
+
+  signalManager.keydown.fire.add(function() {
+    firePlayerProjectile();
+  });
+
+  signalManager.keyup.fire.add(function() {
+    playerProjectileLocked = false;
+  });
+
+  self.addEventListener("message", function(ev) {
+    signalManager[ev.data.type][ev.data.data].dispatch(player);
+  });
+
+  model.push(player);
+  model.push(enemy);
+
+  run();
+
+  self.postMessage({
+    type: "start"
+  });
+  self.postMessage({
+    type: "log",
+    data: "ModelWorker initialization complete."
+  });
 });
-
